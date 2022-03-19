@@ -6,7 +6,7 @@ export class CreateDeliveryController {
         const { id: client_id } = request.client;
         const { item_name } = request.body;
 
-        if (!item_name || !client_id) {
+        if (!item_name) {
             return response.status(400).json({
                 error: 'Required data missing!'
             });

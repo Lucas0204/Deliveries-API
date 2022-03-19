@@ -12,7 +12,7 @@ interface IPayloadData {
 
 }
 
-export async function ensureAuthenticated(
+export async function ensureDeliverymanAuthenticated(
     request: Request,
     response: Response,
     next: NextFunction
@@ -34,20 +34,18 @@ export async function ensureAuthenticated(
         const { sub } = verify(token, process.env.JWT_SECRET) as { sub: string };
         const payload = decode(token, { complete: true }).payload as IPayloadData;
 
-        if (payload.client) {
-            request.client = {
-                id: sub
-            };
-
-            return next();
-        }
-
         if (payload.deliveryman) {
             request.deliveryman = {
                 id: sub
             };
 
             return next();
+        }
+
+        if (payload.client) {
+            return response.status(401).json({
+                error: 'This route is for deliverymans!'
+            })
         }
     } catch (err) {
         const error = new JwtInvalidTokenError();
