@@ -25,7 +25,13 @@ export class AuthenticateDeliverymanUseCase {
             throw new AuthenticateDeliverymanError();
         }
 
-        const token = sign({ username: deliveryman.username }, process.env.JWT_SECRET, {
+        const payload = {
+            username: deliveryman.username,
+            deliveryman: true,
+            client: false
+        };
+
+        const token = sign(payload, process.env.JWT_SECRET, {
             subject: deliveryman.id,
             expiresIn: '1d'
         });

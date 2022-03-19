@@ -26,7 +26,13 @@ export class AuthenticateClientUseCase {
             throw new AuthenticateClientError();
         }
 
-        const token = sign({ username: client.username }, process.env.JWT_SECRET, {
+        const payload = {
+            username: client.username,
+            client: true,
+            deliveryman: false
+        };
+
+        const token = sign(payload, process.env.JWT_SECRET, {
             subject: client.id,
             expiresIn: '1d'
         });
