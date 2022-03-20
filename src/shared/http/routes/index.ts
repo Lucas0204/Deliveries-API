@@ -8,6 +8,6 @@ const routes = Router();
 
 routes.use('/clients', clientsRoutes);
 routes.use('/deliverymans', deliverymansRoutes);
-routes.use('/delivery', deliveriesRoutes);
+routes.use('/deliveries', deliveriesRoutes);
 
 export { routes };
