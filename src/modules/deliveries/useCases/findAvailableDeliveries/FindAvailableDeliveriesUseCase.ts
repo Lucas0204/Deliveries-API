@@ -1,14 +1,16 @@
-import { prisma } from '../../../../shared/database/prismaClient';
+import { Delivery } from '@prisma/client';
+
+import { IDeliveriesRepository } from '../../repositories/IDeliveriesRepository';
+import { DeliveriesRepository } from '../../repositories/implementations/DeliveriesRepository';
 
 export class FindAvailableDeliveriesUseCase {
-    async execute() {
-        const deliveries = await prisma.delivery.findMany({
-            where: {
-                end_at: null,
-                deliveryman_id: null
-            }
-        });
+    private deliveriesRepository: IDeliveriesRepository;
 
-        return deliveries;
+    constructor() {
+        this.deliveriesRepository = new DeliveriesRepository();
+    }
+
+    async execute(): Promise<Delivery[]> {
+        return await this.deliveriesRepository.findAvailable();
     }
 }

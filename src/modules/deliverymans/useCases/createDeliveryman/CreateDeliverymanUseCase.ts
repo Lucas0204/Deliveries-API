@@ -1,8 +1,9 @@
 import { Deliveryman } from '@prisma/client';
 import { hash } from 'bcryptjs';
 
-import { prisma } from '../../../../shared/database/prismaClient';
 import { CreateDeliverymanError } from './CreateDeliverymanError';
+import { DeliverymansRepository } from '../../repositories/implementations/DeliverymansRepository';
+import { IDeliverymansRepository } from 'modules/deliverymans/repositories/IDeliverymansRepository';
 
 interface ICreateDeliverymanData {
     username: string;
@@ -11,24 +12,20 @@ interface ICreateDeliverymanData {
 }
 
 export class CreateDeliverymanUseCase {
+    private deliverymansRepository: IDeliverymansRepository;
+
+    constructor() {
+        this.deliverymansRepository = new DeliverymansRepository();
+    }
+
     async execute({
         username,
         email,
         password
     }: ICreateDeliverymanData): Promise<Deliveryman> {
-        const deliveryman = await prisma.deliveryman.findFirst({
-            where: {
-                username: {
-                    equals: username,
-                    mode: 'insensitive'
-                },
-                OR: {
-                    email: {
-                        equals: email,
-                        mode: 'insensitive'
-                    }
-                }
-            }
+        const deliveryman = await this.deliverymansRepository.findByUsernameOrEmail({
+            username,
+            email
         });
 
         if (deliveryman) {
@@ -37,12 +34,10 @@ export class CreateDeliverymanUseCase {
 
         const passwordHash = await hash(password, 8);
 
-        return await prisma.deliveryman.create({
-            data: {
-                username,
-                email,
-                password: passwordHash
-            }
+        return await this.deliverymansRepository.create({
+            username,
+            email,
+            password: passwordHash
         });
     }
 }

@@ -1,6 +1,7 @@
 import { Delivery } from "@prisma/client";
 
-import { prisma } from '../../../../shared/database/prismaClient';
+import { IDeliveriesRepository } from "../../repositories/IDeliveriesRepository";
+import { DeliveriesRepository } from '../../repositories/implementations/DeliveriesRepository';
 import { AddDeliverymanError } from "./AddDeliverymanError";
 
 interface IAddDeliverymanData {
@@ -10,24 +11,27 @@ interface IAddDeliverymanData {
 
 export class AddDeliverymanUseCase {
     private delivery: Delivery;
+    private deliveriesRepository: IDeliveriesRepository;
+
+    constructor() {
+        this.deliveriesRepository = new DeliveriesRepository();
+    }
 
     async execute({
         delivery_id,
         deliveryman_id
     }: IAddDeliverymanData): Promise<Delivery> {
-        this.delivery = await prisma.delivery.findUnique({
-            where: { id: delivery_id }
-        });
+        this.delivery = await this.deliveriesRepository.findById(
+            delivery_id
+        );
 
         if (!this.delivery) {
             throw new AddDeliverymanError();
         }
 
-        const delivery = await prisma.delivery.update({
-            where: { id: delivery_id },
-            data: {
-                deliveryman_id
-            }
+        const delivery = await this.deliveriesRepository.addDeliveryman({
+            delivery_id,
+            deliveryman_id
         });
 
         return delivery;

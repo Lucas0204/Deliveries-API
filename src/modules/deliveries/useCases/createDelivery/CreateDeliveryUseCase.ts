@@ -1,6 +1,7 @@
 import { Delivery } from '@prisma/client';
+import { IDeliveriesRepository } from '../../repositories/IDeliveriesRepository';
 
-import { prisma } from '../../../../shared/database/prismaClient';
+import { DeliveriesRepository } from '../../repositories/implementations/DeliveriesRepository';
 
 interface ICeateDeliveryData {
     item_name: string;
@@ -8,15 +9,19 @@ interface ICeateDeliveryData {
 }
 
 export class CreateDeliveryUseCase {
+    private deliveriesRepository: IDeliveriesRepository;
+
+    constructor() {
+        this.deliveriesRepository = new DeliveriesRepository();
+    }
+
     async execute({
         item_name,
         client_id
     }: ICeateDeliveryData): Promise<Delivery> {
-        const delivery = await prisma.delivery.create({
-            data: {
-                item_name,
-                client_id
-            }
+        const delivery = await this.deliveriesRepository.create({
+            item_name,
+            client_id
         });
 
         return delivery;

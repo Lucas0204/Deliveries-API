@@ -1,17 +1,19 @@
 import { Client, Delivery } from '@prisma/client';
+import { IClientsRepository } from 'modules/clients/repositories/IClientsRepository';
 
-import { prisma } from '../../../../shared/database/prismaClient';
+import { ClientsRepository } from '../../repositories/implementations/ClientsRepository';
 
 export class GetAllDeliveriesUseCase {
+    private clientsRepository: IClientsRepository;
+
+    constructor() {
+        this.clientsRepository = new ClientsRepository();
+    }
+
     async execute(client_id: string): Promise<Client & { deliveries: Delivery[] }> {
-        const clientDeliveries = await prisma.client.findUnique({
-            where: {
-                id: client_id
-            },
-            include: {
-                deliveries: true
-            }
-        });
+        const clientDeliveries = await this.clientsRepository.getAllDeliveries(
+            client_id
+        );
 
         return clientDeliveries;
     }
