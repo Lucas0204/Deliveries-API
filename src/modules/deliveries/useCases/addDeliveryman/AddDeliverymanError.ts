@@ -1,4 +1,4 @@
-import { AppError } from "shared/error/AppError";
+import { AppError } from "../../../../shared/error/AppError";
 
 export class AddDeliverymanError extends AppError {
     constructor() {

@@ -24,7 +24,7 @@ export class AddDeliverymanUseCase {
         }
 
         const delivery = await prisma.delivery.update({
-            where: this.delivery,
+            where: { id: delivery_id },
             data: {
                 deliveryman_id
             }
