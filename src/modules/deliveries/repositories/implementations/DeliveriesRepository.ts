@@ -1,4 +1,5 @@
 import { Delivery } from "@prisma/client";
+import { IFinalizeDelivery } from "../../dtos/IFinalizeDeliveryData";
 import { prisma } from "../../../../shared/database/prismaClient";
 
 import { IAddDeliverymanData } from "../../dtos/IAddDeliverymanData";
@@ -45,6 +46,21 @@ export class DeliveriesRepository implements IDeliveriesRepository {
             },
             data: {
                 deliveryman_id
+            }
+        });
+    }
+
+    async finalizeDelivery({
+        delivery_id,
+        deliveryman_id
+    }: IFinalizeDelivery) {
+        return await prisma.delivery.updateMany({
+            where: {
+                id: delivery_id,
+                deliveryman_id
+            },
+            data: {
+                end_at: new Date()
             }
         });
     }
