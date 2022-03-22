@@ -1,6 +1,7 @@
 import { Deliveryman } from "@prisma/client";
-import { prisma } from "../../../../shared/database/prismaClient";
 
+import { IGetDeliveriesResponse } from "../../dtos/IGetDeliveriesResponse";
+import { prisma } from "../../../../shared/database/prismaClient";
 import { ICreateDeliverymanData } from "../../dtos/ICreateDeliverymanData";
 import { IFindDeliverymanData } from "../../dtos/IFindDeliverymanData";
 import { IDeliverymansRepository } from "../IDeliverymansRepository";
@@ -36,6 +37,20 @@ export class DeliverymansRepository implements IDeliverymansRepository {
                         mode: 'insensitive'
                     }
                 }
+            }
+        });
+    }
+
+    async getDeliveries(deliveryman_id: string): Promise<IGetDeliveriesResponse> {
+        return await prisma.deliveryman.findUnique({
+            where: {
+                id: deliveryman_id
+            },
+            select: {
+                id: true,
+                username: true,
+                email: true,
+                deliveries: true
             }
         });
     }
