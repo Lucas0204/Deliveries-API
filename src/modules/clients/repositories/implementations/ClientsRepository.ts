@@ -2,6 +2,7 @@ import { Client, Delivery } from "@prisma/client";
 
 import { ICreateClientData } from "../../dtos/ICreateClientData";
 import { IFindClientData } from "../../dtos/IFindClientData";
+import { IGetDeliveriesResponse } from "../../dtos/IGetDeliveriesResponse";
 import { prisma } from "../../../../shared/database/prismaClient";
 import { IClientsRepository } from "../IClientsRepository";
 
@@ -40,13 +41,16 @@ export class ClientsRepository implements IClientsRepository {
         });
     }
 
-    async getAllDeliveries(client_id: string): Promise<Client & { deliveries: Delivery[]; }> {
+    async getAllDeliveries(client_id: string): Promise<IGetDeliveriesResponse> {
         return await prisma.client.findUnique({
             where: {
                 id: client_id
             },
-            include: {
-                deliveries: true
+            select: {
+                deliveries: true,
+                id: true,
+                username: true,
+                email: true
             }
         })
     }
